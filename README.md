@@ -1,16 +1,13 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/minio/sidekick/master/sidekick_logo_dark.png">
-  <img alt="sidekick" src="https://raw.githubusercontent.com/minio/sidekick/master/sidekick_logo.png"  >
-</picture>
+# Hanzo S3 Sidekick
 
-![build](https://github.com/minio/sidekick/workflows/Go/badge.svg) ![license](https://img.shields.io/badge/license-AGPL%20V3-blue)
+![build](https://github.com/hanzos3/sidekick/workflows/Go/badge.svg) ![license](https://img.shields.io/badge/license-AGPL%20V3-blue)
 
 ![GitHub Downloads][gh-downloads]
 
-*sidekick* is a high-performance sidecar load balancer. By attaching a tiny load balancer to each client application process, you can eliminate the need for a centralized load balancer and DNS failover management. *sidekick* automatically avoids sending traffic to the failed servers by checking their health via the readiness API and HTTP error returns.
+**Hanzo S3 Sidekick** is a high-performance sidecar load balancer for [Hanzo S3](https://github.com/hanzoai/s3) and any S3-compatible storage backend. By attaching a tiny load balancer to each client application process, you can eliminate the need for a centralized load balancer and DNS failover management. Sidekick automatically avoids sending traffic to failed servers by checking their health via the readiness API and HTTP error returns.
 
 # Architecture
-![architecture](https://raw.githubusercontent.com/minio/sidekick/master/arch_sidekick.png)
+![architecture](https://raw.githubusercontent.com/hanzos3/sidekick/master/arch_sidekick.png)
 
 # Install
 
@@ -18,14 +15,14 @@
 
 | OS      | ARCH    | Binary                                                                                                 |
 |:-------:|:-------:|:------------------------------------------------------------------------------------------------------:|
-| Linux   | amd64   | [linux-amd64](https://github.com/minio/sidekick/releases/latest/download/sidekick-linux-amd64)         |
-| Linux   | arm64   | [linux-arm64](https://github.com/minio/sidekick/releases/latest/download/sidekick-linux-arm64)         |
-| Linux   | ppc64le | [linux-ppc64le](https://github.com/minio/sidekick/releases/latest/download/sidekick-linux-ppc64le)     |
-| Linux   | s390x   | [linux-s390x](https://github.com/minio/sidekick/releases/latest/download/sidekick-linux-s390x)         |
-| Apple   | amd64   | [darwin-amd64](https://github.com/minio/sidekick/releases/latest/download/sidekick-darwin-amd64)       |
-| Windows | amd64   | [windows-amd64](https://github.com/minio/sidekick/releases/latest/download/sidekick-windows-amd64.exe) |
+| Linux   | amd64   | [linux-amd64](https://github.com/hanzos3/sidekick/releases/latest/download/sidekick-linux-amd64)         |
+| Linux   | arm64   | [linux-arm64](https://github.com/hanzos3/sidekick/releases/latest/download/sidekick-linux-arm64)         |
+| Linux   | ppc64le | [linux-ppc64le](https://github.com/hanzos3/sidekick/releases/latest/download/sidekick-linux-ppc64le)     |
+| Linux   | s390x   | [linux-s390x](https://github.com/hanzos3/sidekick/releases/latest/download/sidekick-linux-s390x)         |
+| Apple   | amd64   | [darwin-amd64](https://github.com/hanzos3/sidekick/releases/latest/download/sidekick-darwin-amd64)       |
+| Windows | amd64   | [windows-amd64](https://github.com/hanzos3/sidekick/releases/latest/download/sidekick-windows-amd64.exe) |
 
-You can also verify the binary with [minisign](https://jedisct1.github.io/minisign/) by downloading the corresponding [`.minisig`](https://github.com/minio/sidekick/releases/latest) signature file. Then run:
+You can also verify the binary with [minisign](https://jedisct1.github.io/minisign/) by downloading the corresponding [`.minisig`](https://github.com/hanzos3/sidekick/releases/latest) signature file. Then run:
 ```
 minisign -Vm sidekick-<OS>-<ARCH> -P RWTx5Zr1tiHQLwG9keckT0c45M3AGeHD6IvimQHpyRywVWGbP1aVSGav
 ```
@@ -34,7 +31,7 @@ minisign -Vm sidekick-<OS>-<ARCH> -P RWTx5Zr1tiHQLwG9keckT0c45M3AGeHD6IvimQHpyRy
 
 Pull the latest release via:
 ```
-docker pull quay.io/minio/sidekick:v7.0.0
+docker pull ghcr.io/hanzos3/sidekick:latest
 ```
 
 ## Build from source
@@ -66,7 +63,7 @@ FLAGS:
   --insecure, -i                      disable TLS certificate verification
   --rr-dns-mode                       enable round-robin DNS mode
   --log, -l                           enable logging
-  --trace value, -t value             enable request tracing - valid values are [all,application,minio] (default: "all")
+  --trace value, -t value             enable request tracing - valid values are [all,application,s3] (default: "all")
   --quiet, -q                         disable console messages
   --json                              output sidekick logs and trace in json format
   --debug                             output verbose trace
@@ -91,20 +88,20 @@ FLAGS:
 $ sidekick --health-path=/ready http://myapp.myorg.dom
 ```
 
-### Load balance across 4 MinIO Servers.
-http://minio1:9000 to http://minio4:9000
+### Load balance across 4 Hanzo S3 Servers.
+http://s3-1:9000 to http://s3-4:9000
 ```
-$ sidekick --health-path=/minio/health/ready --address :8000 http://minio{1...4}:9000
+$ sidekick --health-path=/minio/health/ready --address :8000 http://s3-{1...4}:9000
 ```
 
 ### Load balance across two sites with four servers each
 ```
-$ sidekick --health-path=/minio/health/ready http://site1-minio{1...4}:9000 http://site2-minio{1...4}:9000
+$ sidekick --health-path=/minio/health/ready http://site1-s3-{1...4}:9000 http://site2-s3-{1...4}:9000
 ```
 
 ## Realworld Example with spark-operator
 
-With spark as *driver* and sidecars as *executor*, first install spark-operator and MinIO on your Kubernetes cluster.
+With spark as *driver* and sidecars as *executor*, first install spark-operator and Hanzo S3 on your Kubernetes cluster.
 
 ### Configure *spark-operator*
 
@@ -115,54 +112,42 @@ helm repo add spark-operator https://googlecloudplatform.github.io/spark-on-k8s-
 helm --namespace spark-operator install spark-operator spark-operator/spark-operator --create-namespace --set sparkJobNamespace=spark-operator --set enableWebhook=true
 ```
 
-### Install *MinIO*. 
+### Install *Hanzo S3*.
 
 Ensure that the `standard` storage class was previously installed.
-Note that TLS is disabled for this test. Note also that the minio tenant created is called `myminio`.
+Note that TLS is disabled for this test.
 
 ```
-helm repo add minio-operator https://operator.min.io/
-helm install operator minio-operator/operator --namespace minio-operator --create-namespace
-  
-helm install myminio minio-operator/tenant --namespace tenant-sidekick --create-namespace && \
-kubectl --namespace tenant-sidekick patch tenant myminio --type='merge' -p '{"spec":{"requestAutoCert":false}}'
+kubectl create namespace hanzo-s3
 ```
 
-Once the tenant pods are running, port-forward the minio headless service to access it locally.
+Once the server pods are running, port-forward the service to access it locally.
 ```
-kubectl --namespace tenant-sidekick port-forward svc/myminio-hl 9000 &
-```
-
-Configure [`mc`](https://github.com/minio/mc) and upload some data. Use `mybucket` as the s3 bucket name.
-Create bucket named `mybucket` and upload some text data for spark word count sample.
-```
-mc alias set myminio http://localhost:9000 minio minio123
-mc mb myminio/mybucket
-mc cp /etc/hosts myminio/mybucket/mydata.txt
+kubectl --namespace hanzo-s3 port-forward svc/s3-hl 9000 &
 ```
 
 ### Run the spark job in k8s
 
-Obtain the IP address and port of the `minio` service. Use them as input to `fs.s3a.endpoint` the below SparkApplication. e.g. http://10.43.141.149:80
+Obtain the IP address and port of the S3 service. Use them as input to `fs.s3a.endpoint` in the SparkApplication below.
 ```
-kubectl --namespace tenant-sidekick get svc/minio
+kubectl --namespace hanzo-s3 get svc/s3
 ```
 
-Create the `spark-minio-app` yml
+Create the `spark-s3-app` yml
 ```
 cat << EOF > spark-job.yaml
 apiVersion: "sparkoperator.k8s.io/v1beta2"
 kind: SparkApplication
 metadata:
-  name: spark-minio-app
+  name: spark-s3-app
   namespace: spark-operator
 spec:
   sparkConf:
     spark.kubernetes.allocation.batch.size: "50"
   hadoopConf:
     "fs.s3a.endpoint": "http://10.43.141.149:80"
-    "fs.s3a.access.key": "minio"
-    "fs.s3a.secret.key": "minio123"
+    "fs.s3a.access.key": "hanzo"
+    "fs.s3a.secret.key": "hanzo-secret"
     "fs.s3a.path.style.access": "true"
     "fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
   type: Scala
@@ -186,10 +171,10 @@ spec:
     labels:
       version: 2.4.5
     sidecars:
-    - name: minio-lb
-      image: "quay.io/minio/sidekick:v4.0.3"
+    - name: s3-lb
+      image: "ghcr.io/hanzos3/sidekick:latest"
       imagePullPolicy: Always
-      args: ["--health-path", "/minio/health/ready", "--address", ":8080", "http://myminio-pool-0-{0...3}.myminio-hl.tenant-sidekick.svc.cluster.local:9000"]
+      args: ["--health-path", "/minio/health/ready", "--address", ":8080", "http://s3-pool-0-{0...3}.s3-hl.hanzo-s3.svc.cluster.local:9000"]
       ports:
         - containerPort: 9000
           protocol: http
@@ -200,10 +185,10 @@ spec:
     labels:
       version: 2.4.5
     sidecars:
-    - name: minio-lb
-      image: "quay.io/minio/sidekick:v4.0.3"
+    - name: s3-lb
+      image: "ghcr.io/hanzos3/sidekick:latest"
       imagePullPolicy: Always
-      args: ["--health-path", "/minio/health/ready", "--address", ":8080", "http://myminio-pool-0-{0...3}.myminio-hl.tenant-sidekick.svc.cluster.local:9000"]
+      args: ["--health-path", "/minio/health/ready", "--address", ":8080", "http://s3-pool-0-{0...3}.s3-hl.hanzo-s3.svc.cluster.local:9000"]
       ports:
         - containerPort: 9000
           protocol: http
@@ -214,11 +199,11 @@ Grant permissions to access resources to the service account
 ```
 kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=spark-operator:default --namespace=spark-operator
 kubectl create -f spark-job.yaml
-kubectl --namespace spark-operator logs -f spark-minio-app-driver
+kubectl --namespace spark-operator logs -f spark-s3-app-driver
 ```
 
 #### Monitor
 
-The above SparkApplication will not complete until the Health check returns "200 OK", in this case, when there is a MinIO read quorum. The Health check is provided at the path "/v1/health." It returns "200 OK" even if any one of the sites is reachable; otherwise, it returns a "502 Bad Gateway" error.
+The above SparkApplication will not complete until the Health check returns "200 OK", in this case, when there is a Hanzo S3 read quorum. The Health check is provided at the path "/v1/health." It returns "200 OK" even if any one of the sites is reachable; otherwise, it returns a "502 Bad Gateway" error.
 
-[gh-downloads]: https://img.shields.io/github/downloads/minio/sidekick/total?color=pink&label=GitHub%20Downloads
+[gh-downloads]: https://img.shields.io/github/downloads/hanzos3/sidekick/total?color=pink&label=GitHub%20Downloads

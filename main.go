@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2024 MinIO, Inc.
+// Copyright (c) 2021-2024 Hanzo AI, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -316,7 +316,7 @@ func registerMetricsRouter(router *mux.Router) error {
 // A blocking call to setup a new web API for pprof - the web API
 // can be consumed with go tool pprof command:
 //
-//	e.g. go tool pprof http://localhost:6060/minio/.profile?seconds=20 for CPU profiling
+//	e.g. go tool pprof http://localhost:6060/.pprof/profile?seconds=20 for CPU profiling
 func listenAndServePProf(addr string) error {
 	router := mux.NewRouter()
 
@@ -965,8 +965,8 @@ func configureSite(ctxt context.Context, ctx *cli.Context, siteNum int, siteStrs
 			target.Scheme = "http"
 		}
 		if target.Scheme != "http" && target.Scheme != "https" {
-			console.Fatalln("unexpected scheme %s, should be http or https, please use '%s --help'",
-				endpoint, ctx.App.Name)
+			console.Fatalln(fmt.Errorf("unexpected scheme %s, should be http or https, please use '%s --help'",
+				endpoint, ctx.App.Name))
 		}
 		if target.Host == "" {
 			console.Fatalln(fmt.Errorf("missing host address %s, please use '%s --help'",
@@ -1148,7 +1148,7 @@ func sidekickMain(ctx *cli.Context) {
 	server := &http.Server{
 		Addr:     addr,
 		Handler:  router,
-		ErrorLog: log.New(io.Discard, "", 0), // Turn-off random logging by Go stdlib. From MinIO server implementation.
+		ErrorLog: log.New(io.Discard, "", 0), // Turn-off random logging by Go stdlib.
 	}
 	if ctx.String("cert") != "" && ctx.String("key") != "" {
 		manager, err := certs.NewManager(context.Background(), ctx.String("cert"), ctx.String("key"), LoadX509KeyPair)
@@ -1258,12 +1258,12 @@ func main() {
 
 	app := cli.NewApp()
 	app.Name = os.Args[0]
-	app.HideHelpCommand = true // Hide `help, h` command, we already have `minio --help`.
-	app.Author = "MinIO, Inc."
-	app.Description = `High-Performance sidecar load-balancer`
+	app.HideHelpCommand = true // Hide `help, h` command, we already have `sidekick --help`.
+	app.Author = "Hanzo AI, Inc."
+	app.Description = `Hanzo S3 Sidekick - High-Performance sidecar load-balancer`
 	app.UsageText = "[FLAGS] SITE1 [SITE2..]"
 	app.Version = version
-	app.Copyright = "(c) 2020-2024 MinIO, Inc."
+	app.Copyright = "(c) 2020-2024 Hanzo AI, Inc."
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:  "address, a",
@@ -1314,7 +1314,7 @@ func main() {
 		},
 		cli.StringFlag{
 			Name:  "trace, t",
-			Usage: "enable request tracing - valid values are [all,application,minio]",
+			Usage: "enable request tracing - valid values are [all,application,s3]",
 			Value: "all",
 		},
 		cli.BoolFlag{
@@ -1396,28 +1396,28 @@ SITE:
   If all servers in SITE1 are down, then the traffic is routed to the next site - SITE2.
 
 EXAMPLES:
-  1. Load balance across 4 MinIO Servers (http://minio1:9000 to http://minio4:9000)
-     $ sidekick --health-path "/minio/health/cluster" http://minio{1...4}:9000
+  1. Load balance across 4 Hanzo S3 Servers (http://s3-1:9000 to http://s3-4:9000)
+     $ sidekick --health-path "/minio/health/cluster" http://s3-{1...4}:9000
 
-  2. Load balance across 4 MinIO Servers (http://minio1:9000 to http://minio4:9000), listen on port 8000
-     $ sidekick --health-path "/minio/health/cluster" --address ":8000" http://minio{1...4}:9000
+  2. Load balance across 4 Hanzo S3 Servers (http://s3-1:9000 to http://s3-4:9000), listen on port 8000
+     $ sidekick --health-path "/minio/health/cluster" --address ":8000" http://s3-{1...4}:9000
 
-  3. Load balance across 4 MinIO Servers using HTTPS and disable TLS certificate validation
-     $ sidekick --health-path "/minio/health/cluster" --insecure https://minio{1...4}:9000
+  3. Load balance across 4 Hanzo S3 Servers using HTTPS and disable TLS certificate validation
+     $ sidekick --health-path "/minio/health/cluster" --insecure https://s3-{1...4}:9000
 
   4. Two sites, each site having two pools, each pool having 4 servers:
-     $ sidekick --health-path=/minio/health/cluster http://site1-minio{1...4}:9000,http://site1-minio{5...8}:9000 \
-               http://site2-minio{1...4}:9000,http://site2-minio{5...8}:9000
+     $ sidekick --health-path=/minio/health/cluster http://site1-s3-{1...4}:9000,http://site1-s3-{5...8}:9000 \
+               http://site2-s3-{1...4}:9000,http://site2-s3-{5...8}:9000
 
   5. Two sites, each site having two pools, each pool having 4 servers. After failover, allow read requests to site2 even if it has just read quorum:
-     $ sidekick --health-path=/minio/health/cluster --read-health-path=/minio/health/cluster/read  http://site1-minio{1...4}:9000,http://site1-minio{5...8}:9000 \
-               http://site2-minio{1...4}:9000,http://site2-minio{5...8}:9000
+     $ sidekick --health-path=/minio/health/cluster --read-health-path=/minio/health/cluster/read  http://site1-s3-{1...4}:9000,http://site1-s3-{5...8}:9000 \
+               http://site2-s3-{1...4}:9000,http://site2-s3-{5...8}:9000
 
   6. Sidekick as TLS terminator:
-     $ sidekick --cert public.crt --key private.key --health-path=/minio/health/cluster http://site1-minio{1...4}:9000
+     $ sidekick --cert public.crt --key private.key --health-path=/minio/health/cluster http://site1-s3-{1...4}:9000
 
-  7. Load balance across 4 MinIO Servers (http://minio1:9000 to http://minio4:9000), Set host balance as least 
-     $ sidekick --host-balance=least --health-path=/minio/health/cluster http://minio{1...4}:9000
+  7. Load balance across 4 Hanzo S3 Servers (http://s3-1:9000 to http://s3-4:9000), Set host balance as least
+     $ sidekick --host-balance=least --health-path=/minio/health/cluster http://s3-{1...4}:9000
 `
 	app.Action = sidekickMain
 	app.Run(os.Args)

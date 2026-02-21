@@ -1,8 +1,8 @@
-# How to monitor Sidekick loadbalancer with Prometheus [![Slack](https://slack.min.io/slack?type=svg)](https://slack.min.io)
+# How to monitor Hanzo S3 Sidekick with Prometheus
 
 [Prometheus](https://prometheus.io) is a cloud-native monitoring platform, built originally at SoundCloud. Prometheus offers a multi-dimensional data model with time series data identified by metric name and key/value pairs. The data collection happens via a pull model over HTTP/HTTPS. Targets to pull data from are discovered via service discovery or static configuration.
 
-Sidekick exports Prometheus compatible data by default as an authorized endpoint at `/.prometheus/metrics`. Users looking to monitor their MinIO instances can point Prometheus configuration to scrape data from this endpoint.
+Sidekick exports Prometheus compatible data by default as an authorized endpoint at `/.prometheus/metrics`. Users looking to monitor their Hanzo S3 instances can point Prometheus configuration to scrape data from this endpoint.
 
 This document explains how to setup Prometheus and configure it to scrape data from Sidekick.
 
@@ -74,11 +74,11 @@ Here `prometheus.yml` is the name of configuration file. You can now see Sidekic
 
 ## List of metrics exposed by Sidekick
 
-Sidekick loadbalancer exposes the following metrics on `/.prometheus/metrics` endpoint. All of these can be accessed via Prometheus dashboard.
+Hanzo S3 Sidekick loadbalancer exposes the following metrics on `/.prometheus/metrics` endpoint. All of these can be accessed via Prometheus dashboard.
 
-| Metrics Name              | Description                                                         |
-|:-------------------------:|:-------------------------------------------------------------------:|
-| `sidekick_requests_total` | Total number of requests in current SideKick instance.              |
-| `sidekick_errors_total`   | Total number of errors in requests in current SideKick instance.    |
-| `sidekick_rx_bytes_total` | Total number of bytes received by current SideKick server instance. |
-| `sidekick_tx_bytes_total` | Total number of bytes sent to current SideKick server instance.     |
+| Metrics Name              | Description                                                                    |
+|:-------------------------:|:------------------------------------------------------------------------------:|
+| `sidekick_requests_total` | Total number of requests in current Hanzo S3 Sidekick instance.                |
+| `sidekick_errors_total`   | Total number of errors in requests in current Hanzo S3 Sidekick instance.      |
+| `sidekick_rx_bytes_total` | Total number of bytes received by current Hanzo S3 Sidekick server instance.   |
+| `sidekick_tx_bytes_total` | Total number of bytes sent to current Hanzo S3 Sidekick server instance.       |

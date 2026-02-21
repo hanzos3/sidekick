@@ -1,11 +1,11 @@
-# Systemd service for Sidekick
+# Systemd service for Hanzo S3 Sidekick
 
-Systemd script for Sidekick Load Balancer.
+Systemd script for Hanzo S3 Sidekick Load Balancer.
 
 ## Installation
 
 - Systemd script is configured to run the binary from /usr/local/bin/
-- Download the binary from https://github.com/minio/sidekick/releases
+- Download the binary from https://github.com/hanzos3/sidekick/releases
 
 ## Create default configuration
 
@@ -31,4 +31,4 @@ systemctl enable sidekick.service
 ```
 
 ## Note
-Replace User=nobody and Group=nobody in minio.service file with your local setup user.
+Replace User=nobody and Group=nobody in sidekick.service file with your local setup user.

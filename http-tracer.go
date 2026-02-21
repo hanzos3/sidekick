@@ -1,4 +1,4 @@
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2020 Hanzo AI, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -300,7 +300,7 @@ func doTrace(trace TraceInfo, backend *Backend) {
 		return
 	}
 
-	if globalTrace == "minio" && !strings.Contains(backend.healthCheckURL, st.Path) {
+	if globalTrace == "s3" && !strings.Contains(backend.healthCheckURL, st.Path) {
 		return
 	}
 

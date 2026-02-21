@@ -1,6 +1,6 @@
 [Unit]
-Description=Sidekick
-Documentation=https://github.com/minio/sidekick/blob/master/README.md
+Description=Hanzo S3 Sidekick
+Documentation=https://github.com/hanzos3/sidekick/blob/master/README.md
 Wants=network-online.target
 After=network-online.target
 AssertFileIsExecutable=/usr/bin/sidekick

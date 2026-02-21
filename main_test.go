@@ -1,4 +1,4 @@
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2020 Hanzo AI, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -30,23 +30,23 @@ func TestGetHealthCheckURL_Valid(t *testing.T) {
 	}{
 		{
 			name:            "PortSetToZero",
-			endpoint:        "http://minio1:9000",
+			endpoint:        "http://s3-1:9000",
 			healthCheckPath: "/minio/health/ready",
-			want:            "http://minio1:9000/minio/health/ready",
+			want:            "http://s3-1:9000/minio/health/ready",
 		},
 		{
 			name:            "PortSetToNonZeroValue",
-			endpoint:        "http://minio1:9000",
+			endpoint:        "http://s3-1:9000",
 			healthCheckPath: "/minio/health/ready",
 			healthCheckPort: 4242,
-			want:            "http://minio1:4242/minio/health/ready",
+			want:            "http://s3-1:4242/minio/health/ready",
 		},
 		{
 			name:            "PortSetToUpperLimit",
-			endpoint:        "http://minio1:9000",
+			endpoint:        "http://s3-1:9000",
 			healthCheckPath: "/minio/health/ready",
 			healthCheckPort: portUpperLimit,
-			want:            "http://minio1:65535/minio/health/ready",
+			want:            "http://s3-1:65535/minio/health/ready",
 		},
 	}
 
@@ -82,13 +82,13 @@ func TestGetHealthCheckURL_Invalid(t *testing.T) {
 		},
 		{
 			name:            "PortNumberBelowLowerLimit",
-			endpoint:        "http://minio1:9000",
+			endpoint:        "http://s3-1:9000",
 			healthCheckPath: "/minio/health/ready",
 			healthCheckPort: portLowerLimit - 1,
 		},
 		{
 			name:            "PortNumberAboveUpperLimit",
-			endpoint:        "http://minio1:9000",
+			endpoint:        "http://s3-1:9000",
 			healthCheckPath: "/minio/health/ready",
 			healthCheckPort: portUpperLimit + 1,
 		},

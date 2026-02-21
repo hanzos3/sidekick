@@ -1,4 +1,4 @@
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2020 Hanzo AI, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -34,7 +34,7 @@ func init() {
 // to define metric and  help string
 func newSidekickCollector() *sidekickCollector {
 	return &sidekickCollector{
-		desc: prometheus.NewDesc("sidekick_stats", "Statistics exposed by Sidekick loadbalancer", nil, nil),
+		desc: prometheus.NewDesc("sidekick_stats", "Statistics exposed by Hanzo S3 Sidekick loadbalancer", nil, nil),
 	}
 }
 
@@ -59,7 +59,7 @@ func (c *sidekickCollector) Collect(ch chan<- prometheus.Metric) {
 		ch <- prometheus.MustNewConstMetric(
 			prometheus.NewDesc(
 				prometheus.BuildFQName("sidekick", "requests", "total"),
-				"Total number of calls in current SideKick server instance",
+				"Total number of calls in current Hanzo S3 Sidekick server instance",
 				[]string{"endpoint"}, nil),
 			prometheus.CounterValue,
 			float64(c.totalCalls.Load()),
@@ -68,7 +68,7 @@ func (c *sidekickCollector) Collect(ch chan<- prometheus.Metric) {
 		ch <- prometheus.MustNewConstMetric(
 			prometheus.NewDesc(
 				prometheus.BuildFQName("sidekick", "errors", "total"),
-				"Total number of failed calls in current SideKick server instance",
+				"Total number of failed calls in current Hanzo S3 Sidekick server instance",
 				[]string{"endpoint"}, nil),
 			prometheus.CounterValue,
 			float64(c.totalFailedCalls.Load()),
@@ -77,7 +77,7 @@ func (c *sidekickCollector) Collect(ch chan<- prometheus.Metric) {
 		ch <- prometheus.MustNewConstMetric(
 			prometheus.NewDesc(
 				prometheus.BuildFQName("sidekick", "rx", "bytes_total"),
-				"Total number of bytes received by current SideKick server instance",
+				"Total number of bytes received by current Hanzo S3 Sidekick server instance",
 				[]string{"endpoint"}, nil),
 			prometheus.CounterValue,
 			float64(c.getTotalInputBytes()),
@@ -86,7 +86,7 @@ func (c *sidekickCollector) Collect(ch chan<- prometheus.Metric) {
 		ch <- prometheus.MustNewConstMetric(
 			prometheus.NewDesc(
 				prometheus.BuildFQName("sidekick", "tx", "bytes_total"),
-				"Total number of bytes sent by current SideKick server instance",
+				"Total number of bytes sent by current Hanzo S3 Sidekick server instance",
 				[]string{"endpoint"}, nil),
 			prometheus.CounterValue,
 			float64(c.getTotalOutputBytes()),

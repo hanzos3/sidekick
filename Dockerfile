@@ -14,7 +14,7 @@ ENV CGO_ENABLED=0
 RUN go build -ldflags '-w -s' -a -o sidekick .
 
 FROM scratch
-MAINTAINER MinIO Development "dev@min.io"
+MAINTAINER Hanzo AI "dev@hanzo.ai"
 EXPOSE 8080
 
 COPY --from=0 /go/src/github.com/minio/sidekick/sidekick /sidekick

@@ -1,4 +1,4 @@
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2020 Hanzo AI, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -25,10 +25,10 @@ func setMaxResources() (err error) {
 	// Set the Go runtime max threads threshold to 90% of kernel setting.
 	sysMaxThreads, mErr := sys.GetMaxThreads()
 	if mErr == nil {
-		minioMaxThreads := (sysMaxThreads * 90) / 100
+		maxThreads := (sysMaxThreads * 90) / 100
 		// Only set max threads if it is greater than the default one
-		if minioMaxThreads > 10000 {
-			debug.SetMaxThreads(minioMaxThreads)
+		if maxThreads > 10000 {
+			debug.SetMaxThreads(maxThreads)
 		}
 	}
 
