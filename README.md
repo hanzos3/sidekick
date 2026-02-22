@@ -153,7 +153,7 @@ spec:
   type: Scala
   sparkVersion: 2.4.5
   mode: cluster
-  image: minio/spark:v2.4.5-hadoop-3.1
+  image: ghcr.io/hanzos3/spark:v2.4.5-hadoop-3.1
   imagePullPolicy: Always
   restartPolicy:
       type: OnFailure
